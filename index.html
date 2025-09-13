@@ -10,7 +10,56 @@
   <title>LightNote v1 — tiny journal</title>
   <!-- simple text favicon (SVG data URL) -->
   <link rel="icon" href='data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64"><rect width="100%" height="100%" fill="%2316161b"/><text x="50%" y="56%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="42" fill="%238ab4f8">LN</text></svg>' />
+  <style>
+    .nav {
+      display: flex;
+      gap: 1rem;
+      margin-left: 2rem;
+      align-items: center;
+    }
+    .nav-link {
+      text-decoration: none;
+      color: inherit;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      transition: background-color 0.2s;
+      font-size: 0.9rem;
+      opacity: 0.8;
+    }
+    .nav-link:hover,
+    .nav-link.active {
+      background-color: rgba(255, 255, 255, 0.1);
+      opacity: 1;
+    }
+    .flex {
+      display: flex;
+      align-items: center;
+    }
+    h1 {
+      font-size: 1.2rem;
+      font-weight: 500;
+      margin: 0;
+    }
+    .version {
+      opacity: 0.7;
+      font-weight: normal;
+    }
+  </style>
   <script>
+    // Router
+    function route(){
+      const hash = location.hash || '#/write';
+      document.querySelectorAll('[data-route]').forEach(el => {
+        el.style.display = ('#/'+el.dataset.route === hash) ? '' : 'none';
+      });
+      // Update active nav link
+      document.querySelectorAll('.nav-link').forEach(link => {
+        link.classList.toggle('active', link.getAttribute('href') === hash);
+      });
+    }
+    window.addEventListener('hashchange', route);
+    window.addEventListener('load', route);
+
     // Constants
 
     const lexicon = {
@@ -8425,6 +8474,11 @@ textarea#entry{
     <div class="wrap">
       <div class="flex">
         <h1>LightNote <span class="version">v1 — tiny journal</span></h1>
+        <nav class="nav">
+          <a href="#/write" class="nav-link active">Entries</a>
+          <a href="#/analytics" class="nav-link">Analytics</a>
+          <a href="#/settings" class="nav-link">Settings</a>
+        </nav>
         <div class="spacer"></div>
         <small id="streak" class="subtle" style="margin-right: 12px"></small>
         <span class="badge" id="editBadge" style="display:none" aria-live="polite">Editing…</span>
@@ -8435,7 +8489,9 @@ textarea#entry{
   </header>
 
   <main class="wrap">
-    <div class="grid">
+    <!-- Write/Entry Section -->
+    <div data-route="write">
+      <div class="grid">
       <section class="card">
         <div class="subtle">Prompt</div>
         <div id="prompt" class="prompt"></div>
@@ -8505,12 +8561,19 @@ textarea#entry{
       <div id="entries" class="list"></div>
     </section>
 
-    <section class="card" style="margin-top:16px">
-      <div class="subtle">Quick Analysis (local, offline)</div>
-      <div id="analysis"></div>
-    </section>
+    </div>
 
-    <details class="card readme">
+    <!-- Analytics Section -->
+    <div data-route="analytics">
+      <section class="card">
+        <div class="subtle">Quick Analysis (local, offline)</div>
+        <div id="analysis"></div>
+      </section>
+    </div>
+
+    <!-- Settings Section -->
+    <div data-route="settings">
+      <details class="card readme">
       <summary><b>README (click to view)</b></summary>
       <div class="row" style="margin-top:10px">
         <div class="smallnote">
